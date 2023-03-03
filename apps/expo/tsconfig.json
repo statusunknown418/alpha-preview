@@ -6,6 +6,7 @@
   },
   "include": [
     "src",
+    "app",
     "index.ts",
     "app.config.ts",
     "./expo-plugins/with-modify-gradle.js"

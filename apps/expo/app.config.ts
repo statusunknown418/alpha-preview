@@ -22,6 +22,9 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
     fallbackToCacheTimeout: 0,
   },
   assetBundlePatterns: ["**/*"],
+  web: {
+    bundler: "metro",
+  },
   ios: {
     supportsTablet: true,
     // TODO: Update this on production
