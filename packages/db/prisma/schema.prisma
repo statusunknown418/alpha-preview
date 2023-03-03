@@ -16,3 +16,52 @@ model Post {
     title   String
     content String
 }
+
+model Landlord {
+    id             Int        @id @default(autoincrement())
+    clerkAccountId String
+    verifiedTick   Boolean    @default(false)
+    properties     Property[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Property {
+    id         Int             @id @default(autoincrement())
+    address    String
+    city       String
+    state      String
+    zip        String
+    Images     PropertyImage[]
+    landlordId Int
+    landlord   Landlord        @relation(fields: [landlordId], references: [id])
+    reviews    Review[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([landlordId])
+}
+
+model PropertyImage {
+    id         Int      @id @default(autoincrement())
+    imageUrl   String
+    propertyId Int
+    property   Property @relation(fields: [propertyId], references: [id])
+
+    @@index([propertyId])
+}
+
+model Review {
+    id         Int      @id @default(autoincrement())
+    rating     Int
+    comment    String
+    propertyId Int
+    property   Property @relation(fields: [propertyId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([propertyId])
+}

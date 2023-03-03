@@ -20,5 +20,7 @@ module.exports = {
         varsIgnorePattern: "^_",
       },
     ],
+    "@typescript-eslint/no-explicit-any": "warn",
+    "no-console": "warn",
   },
 };

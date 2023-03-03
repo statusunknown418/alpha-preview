@@ -23,6 +23,7 @@ export const App = () => {
           </SafeAreaProvider>
         </TRPCProvider>
       </SignedIn>
+
       <SignedOut>
         <SignInSignUpScreen />
       </SignedOut>

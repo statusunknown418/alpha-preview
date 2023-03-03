@@ -1,15 +1,21 @@
-import { useSignIn, useSignUp } from "@clerk/clerk-expo";
-import React from "react";
-import { Button, View } from "react-native";
+import { useAuth, useSignIn, useSignUp } from "@clerk/clerk-expo";
+import React, { useState } from "react";
+import { Button, TextInput, View } from "react-native";
 
 import * as AuthSession from "expo-auth-session";
 
-const SignInWithOAuth = () => {
+export const SignInWithOAuth = () => {
   const { isLoaded, signIn, setSession } = useSignIn();
-  const { signUp } = useSignUp();
+
+  const { signUp, isLoaded: isSignUpLoaded } = useSignUp();
+
+  const { signOut } = useAuth();
+
+  const [code, setCode] = useState<string>("");
+
   if (!isLoaded) return null;
 
-  const handleSignInWithDiscordPress = async () => {
+  const handleSignInWithGooglePress = async () => {
     try {
       const redirectUrl = AuthSession.makeRedirectUri({
         path: "/oauth-native-callback",
@@ -57,10 +63,6 @@ const SignInWithOAuth = () => {
           throw "Something went wrong during the Sign up OAuth flow. Please ensure that all sign up requirements are met.";
         }
 
-        console.log(
-          "Didn't have an account transferring, following through with new account sign up",
-        );
-
         // Create user
         await signUp.create({ transfer: true });
         await signUp.reload({
@@ -69,19 +71,52 @@ const SignInWithOAuth = () => {
         await setSession(signUp.createdSessionId);
       }
     } catch (err) {
-      console.log(JSON.stringify(err, null, 2));
-      console.log("error signing in", err);
+      throw new Error("Error signing in");
+    }
+  };
+
+  const handleSignInWithPhone = async () => {
+    try {
+      if (!signUp || !isSignUpLoaded) {
+        throw "Something went wrong during the Sign up OAuth flow. Please ensure that all sign up requirements are met.";
+      }
+
+      await signUp.create({ phoneNumber: "+51 993606898" });
+
+      await signUp.preparePhoneNumberVerification();
+    } catch (err) {
+      throw new Error("Error signing in");
+    }
+  };
+
+  const verify = async () => {
+    try {
+      if (!signUp || !isSignUpLoaded) {
+        throw "Something went wrong during the Sign up OAuth flow. Please ensure that all sign up requirements are met.";
+      }
+
+      await signUp.attemptPhoneNumberVerification({ code });
+
+      await setSession(signUp.createdSessionId);
+    } catch (err) {
+      throw new Error("Error verifying phone number");
     }
   };
 
   return (
     <View className="rounded-lg border-2 border-gray-500 p-4">
       <Button
-        title="Sign in with Discord"
-        onPress={handleSignInWithDiscordPress}
+        title="Sign in with Google - use this"
+        onPress={handleSignInWithGooglePress}
       />
+
+      <Button title="Sign in with Phone" onPress={handleSignInWithPhone} />
+
+      <TextInput value={code} onChangeText={setCode} />
+
+      <Button title="Verify" onPress={verify} />
+
+      <Button title="Sign Out" onPress={() => signOut()} />
     </View>
   );
 };
-
-export default SignInWithOAuth;

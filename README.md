@@ -173,6 +173,8 @@ Deploying your Expo application works slightly differently compared to Next.js o
 
 8. Done! Now that you have created your production build, submitted it to the stores, and installed EAS Update, you are ready for anything!
 
+9. May need to change to 'store' for Test Flight on eas.json
+
 ## References
 
 The stack originates from [create-t3-turbo](https://github.com/t3-oss/create-t3-turbo).
