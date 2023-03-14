@@ -1,6 +1,6 @@
 import { useAuth, useSignIn, useSignUp } from "@clerk/clerk-expo";
 import React, { useState } from "react";
-import { Button, TextInput, View } from "react-native";
+import { Button, View } from "react-native";
 
 import * as AuthSession from "expo-auth-session";
 
@@ -75,46 +75,12 @@ export const SignInWithOAuth = () => {
     }
   };
 
-  const handleSignInWithPhone = async () => {
-    try {
-      if (!signUp || !isSignUpLoaded) {
-        throw "Something went wrong during the Sign up OAuth flow. Please ensure that all sign up requirements are met.";
-      }
-
-      await signUp.create({ phoneNumber: "+51 993606898" });
-
-      await signUp.preparePhoneNumberVerification();
-    } catch (err) {
-      throw new Error("Error signing in");
-    }
-  };
-
-  const verify = async () => {
-    try {
-      if (!signUp || !isSignUpLoaded) {
-        throw "Something went wrong during the Sign up OAuth flow. Please ensure that all sign up requirements are met.";
-      }
-
-      await signUp.attemptPhoneNumberVerification({ code });
-
-      await setSession(signUp.createdSessionId);
-    } catch (err) {
-      throw new Error("Error verifying phone number");
-    }
-  };
-
   return (
     <View className="rounded-lg border-2 border-gray-500 p-4">
       <Button
         title="Sign in with Google - use this"
         onPress={handleSignInWithGooglePress}
       />
-
-      <Button title="Sign in with Phone" onPress={handleSignInWithPhone} />
-
-      <TextInput value={code} onChangeText={setCode} />
-
-      <Button title="Verify" onPress={verify} />
 
       <Button title="Sign Out" onPress={() => signOut()} />
     </View>

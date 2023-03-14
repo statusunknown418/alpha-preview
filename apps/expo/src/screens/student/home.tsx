@@ -7,14 +7,14 @@ import type { inferProcedureOutput } from "@trpc/server";
 import { Button, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { trpc } from "../utils/trpc";
+import { trpc } from "../../utils/trpc";
 
 const SignOut = () => {
   const { signOut } = useAuth();
   return (
     <View className="rounded-lg border-2 border-gray-500 p-4">
       <Button
-        title="Sign Out"
+        title="Sign Out Now"
         onPress={() => {
           signOut();
         }}

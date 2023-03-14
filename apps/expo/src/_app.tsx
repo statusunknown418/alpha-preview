@@ -1,13 +1,9 @@
-import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { TRPCProvider } from "./utils/trpc";
-
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { ClerkProvider } from "@clerk/clerk-expo";
 import Constants from "expo-constants";
-import { HomeScreen } from "./screens/home";
-import { SignInSignUpScreen } from "./screens/signin";
+import React from "react";
+import { MainNavigationContainer } from "./navigation/StackNavigator";
 import { tokenCache } from "./utils/cache";
+import { TRPCProvider } from "./utils/trpc";
 
 export const App = () => {
   return (
@@ -15,18 +11,9 @@ export const App = () => {
       publishableKey={Constants.expoConfig?.extra?.CLERK_PUBLISHABLE_KEY}
       tokenCache={tokenCache}
     >
-      <SignedIn>
-        <TRPCProvider>
-          <SafeAreaProvider>
-            <StatusBar style="dark" />
-            <HomeScreen />
-          </SafeAreaProvider>
-        </TRPCProvider>
-      </SignedIn>
-
-      <SignedOut>
-        <SignInSignUpScreen />
-      </SignedOut>
+      <TRPCProvider>
+        <MainNavigationContainer />
+      </TRPCProvider>
     </ClerkProvider>
   );
 };

@@ -17,11 +17,28 @@ model Post {
     content String
 }
 
+model Student {
+    id Int @id @default(autoincrement())
+
+    clerkId      String
+    email        String   @unique
+    firstName    String
+    lastName     String
+    reviewsGiven Review[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
 model Landlord {
-    id             Int        @id @default(autoincrement())
-    clerkAccountId String
-    verifiedTick   Boolean    @default(false)
-    properties     Property[]
+    id Int @id @default(autoincrement())
+
+    clerkId     String
+    email       String     @unique
+    phoneNumber String
+    firstName   String
+    lastName    String
+    Property    Property[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -33,15 +50,29 @@ model Property {
     city       String
     state      String
     zip        String
-    Images     PropertyImage[]
     landlordId Int
     landlord   Landlord        @relation(fields: [landlordId], references: [id])
+    images     PropertyImage[]
     reviews    Review[]
+    documents  Document[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     @@index([landlordId])
+}
+
+model Document {
+    id Int @id @default(autoincrement())
+
+    approved     Boolean @default(false)
+    documentName String
+    documentURL  String
+
+    Property   Property? @relation(fields: [propertyId], references: [id])
+    propertyId Int?
+
+    @@index([propertyId])
 }
 
 model PropertyImage {
@@ -59,9 +90,12 @@ model Review {
     comment    String
     propertyId Int
     property   Property @relation(fields: [propertyId], references: [id])
+    madeBy     Student? @relation(fields: [madeById], references: [id])
+    madeById   Int?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     @@index([propertyId])
+    @@index([madeById])
 }
