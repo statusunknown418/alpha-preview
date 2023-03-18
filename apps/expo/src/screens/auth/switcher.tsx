@@ -1,7 +1,37 @@
 import { useAuth, useUser } from "@clerk/clerk-expo";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import {
+  AppStackParamList,
+  LandlordTabsParamList,
+  RootStackParamList,
+  StudentTabsParamList,
+} from "../../navigation/StackNavigator";
 import { trpc } from "../../utils/trpc";
+import { useMetadataStore } from "../../utils/zustand/useMetadataStore";
+
+export type NavigatedRoute =
+  | keyof AppStackParamList
+  | keyof LandlordTabsParamList
+  | keyof StudentTabsParamList
+  | keyof RootStackParamList;
+
+export type TypedNavigationProps<R extends NavigatedRoute> =
+  CompositeNavigationProp<
+    BottomTabNavigationProp<
+      StudentTabsParamList &
+        LandlordTabsParamList &
+        AppStackParamList &
+        RootStackParamList,
+      R
+    >,
+    NativeStackNavigationProp<AppStackParamList>
+  >;
 
 export const SwitcherScreen = () => {
   const { signOut, getToken } = useAuth();
@@ -10,15 +40,15 @@ export const SwitcherScreen = () => {
 
   const navigation = useNavigation();
 
-  const route = useRoute();
+  const setStore = useMetadataStore((state) => state.setRole);
 
   const { mutate } = trpc.auth.updateClerkUser.useMutation({
     onSuccess: ({ public_metadata: { role } }) => {
-      console.log("role", role);
+      setStore(role);
 
-      console.log(route.name, route.path);
-
-      // navigation.navigate();
+      navigation.navigate("App", {
+        screen: role === "student" ? "Student" : "Landlord",
+      });
     },
   });
 

@@ -6,6 +6,7 @@ import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SignInSignUpScreen } from "../screens/auth/signin";
 import { SwitcherScreen } from "../screens/auth/switcher";
+import { useMetadataStore } from "../utils/zustand/useMetadataStore";
 import { LandlordSpecificNavigation } from "./LandlordNavigation";
 import { StudentSpecificNavigation } from "./StudentNavigation";
 
@@ -104,11 +105,15 @@ export const AppStackWrapper = () => {
 
   const role = hasMetadata && (user.publicMetadata?.role as Role);
 
+  const store = useMetadataStore((state) => state.role);
+
+  console.log({ store, role, hasMetadata });
+
   return (
     <RootStack.Navigator>
-      {hasMetadata ? (
+      {hasMetadata || store ? (
         <RootStack.Group>
-          {role === "student" ? (
+          {role === "student" || store === "student" ? (
             <RootStack.Screen
               name="Student"
               component={StudentSpecificNavigation}
